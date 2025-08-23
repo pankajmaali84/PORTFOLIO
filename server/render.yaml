@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: portfolio-server
+    env: node
+    plan: free
+    autoDeploy: true
+    buildCommand: "npm install"
+    startCommand: "node src/index.js"
+    healthCheckPath: "/api/health"
+    envVars:
+      - key: MONGODB_URI
+        sync: false
