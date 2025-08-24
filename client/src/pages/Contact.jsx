@@ -5,7 +5,9 @@ import { MailIcon } from '../components/Icons'
 import toast from 'react-hot-toast'
 
 export default function Contact() {
-  const api = axios.create({ baseURL: import.meta.env.VITE_API_BASE || '' })
+  const api = axios.create({
+    baseURL: import.meta.env.VITE_API_BASE || 'https://portfolio-pankaj-gfzo.onrender.com'
+  })
   const [form, setForm] = useState({ name: '', email: '', subject: '', body: '' })
   const [status, setStatus] = useState({ loading: false, message: '' })
   const [copied, setCopied] = useState(false)

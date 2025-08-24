@@ -4,7 +4,9 @@ import { gsap } from 'gsap'
 import { FolderIcon } from '../components/Icons'
 
 export default function Projects() {
-  const api = axios.create({ baseURL: import.meta.env.VITE_API_BASE || '' })
+  const api = axios.create({
+    baseURL: import.meta.env.VITE_API_BASE || 'https://portfolio-pankaj-gfzo.onrender.com'
+  })
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState('')
