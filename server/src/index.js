@@ -24,6 +24,13 @@ app.use(cors(corsOptions));
 // Handle preflight requests globally
 app.options('*', cors(corsOptions));
 
+// Root route to avoid "Not Found" on service base URL
+app.get('/', (_req, res) => {
+  res.type('text').send(
+    'Portfolio API is running. Health: /api/health\nFrontend: https://portfolio-cyan-one-63.vercel.app'
+  );
+});
+
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 app.use('/api/projects', projectsRouter);
 app.use('/api/contact', contactRouter);
