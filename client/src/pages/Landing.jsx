@@ -49,7 +49,13 @@ export default function Landing() {
             <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-primary/25 to-indigo-500/20 border border-primary/40" />
             <div className="floating absolute -top-6 -left-6 size-14 rounded-xl bg-primary/25 border border-primary/40" />
             <div className="floating absolute -bottom-6 -right-6 size-16 rounded-xl bg-indigo-500/25 border border-indigo-400/40" style={{ animationDelay: '0.4s' }} />
-            <div className="absolute inset-0 flex items-center justify-center text-7xl">✨</div>
+            {/* Profile photo from public folder: place your image at client/public/pankaj.jpg */}
+            <img
+              src="/pankaj.jpg"
+              alt="Pankaj Mali portrait"
+              className="absolute inset-0 w-full h-full object-cover rounded-2xl shadow-lg"
+              loading="eager"
+            />
           </div>
         </div>
       </div>
