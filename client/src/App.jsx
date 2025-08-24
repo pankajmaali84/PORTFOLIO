@@ -116,8 +116,14 @@ function Footer() {
   return (
     <footer className="border-t border-slate-200 py-8 bg-white dark:bg-slate-900 dark:border-slate-800">
       <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-slate-600 dark:text-slate-400">
-        <p className="text-center">&copy; {new Date().getFullYear()} Your Name. All rights reserved.</p>
+        <p className="text-center">&copy; {new Date().getFullYear()} Pankaj Mali. All rights reserved.</p>
         <div className="flex items-center gap-4">
+          <a href="https://portfolio-cyan-one-63.vercel.app" target="_blank" rel="noreferrer" className="hover:text-slate-900 dark:hover:text-white" title="Live Site">
+            Live Site
+          </a>
+          <a href="https://portfolio-pankaj-gfzo.onrender.com" target="_blank" rel="noreferrer" className="hover:text-slate-900 dark:hover:text-white" title="API Base">
+            API
+          </a>
           <a href="https://github.com/" target="_blank" rel="noreferrer" className="hover:text-slate-900 dark:hover:text-white" title="GitHub">
             <GithubIcon className="w-5 h-5" />
           </a>
