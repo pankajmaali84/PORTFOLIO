@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { gsap } from 'gsap'
 import { MailIcon } from '../components/Icons'
+import toast from 'react-hot-toast'
 
 export default function Contact() {
   const api = axios.create({ baseURL: import.meta.env.VITE_API_BASE || '' })
@@ -16,12 +17,18 @@ export default function Contact() {
   const onSubmit = async (e) => {
     e.preventDefault()
     setStatus({ loading: true, message: '' })
+    const t = toast.loading('Sending message...')
     try {
       await api.post('/api/contact', form)
-      setStatus({ loading: false, message: 'Message sent! ✅' })
+      toast.success('Message sent! ✅')
       setForm({ name: '', email: '', subject: '', body: '' })
+      setStatus({ loading: false, message: '' })
     } catch (err) {
-      setStatus({ loading: false, message: 'Failed to send. ❌' })
+      const apiMsg = err?.response?.data?.message || err?.message || 'Failed to send.'
+      toast.error(apiMsg)
+      setStatus({ loading: false, message: '' })
+    } finally {
+      toast.dismiss(t)
     }
   }
 
@@ -70,7 +77,7 @@ export default function Contact() {
           <button disabled={status.loading} className="contact-submit inline-flex items-center justify-center px-5 py-3 rounded-lg bg-primary text-white font-semibold hover:bg-primary-dark transition disabled:opacity-60">
             {status.loading ? 'Sending...' : 'Send Message'}
           </button>
-          {status.message && <p className="text-slate-600 dark:text-slate-300">{status.message}</p>}
+          {/* Toasts will show success/error messages */}
         </form>
       </div>
     </section>
