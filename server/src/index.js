@@ -11,14 +11,20 @@ app.use(express.json());
 
 // Robust CORS configuration with preflight support
 const corsOptions = {
-  origin: [
-    'https://portfolio-cyan-one-63.vercel.app',
-    'http://localhost:5173',
-    'http://localhost:3000',
-    '*' // fallback for other origins if needed
-  ],
+  // Allow requests from known frontends; fallback to allowing any origin for this portfolio
+  origin: function (origin, callback) {
+    const allowed = [
+      'https://portfolio-cyan-one-63.vercel.app',
+      'http://localhost:5173',
+      'http://localhost:3000'
+    ];
+    if (!origin || allowed.includes(origin)) return callback(null, true);
+    // For public portfolio, allow other origins too (you can tighten later)
+    return callback(null, true);
+  },
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
 // Handle preflight requests globally
