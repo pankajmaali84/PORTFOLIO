@@ -8,7 +8,21 @@ const contactRouter = require('./routes/contact');
 
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: '*' }));
+
+// Robust CORS configuration with preflight support
+const corsOptions = {
+  origin: [
+    'https://portfolio-cyan-one-63.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:3000',
+    '*' // fallback for other origins if needed
+  ],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+app.use(cors(corsOptions));
+// Handle preflight requests globally
+app.options('*', cors(corsOptions));
 
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 app.use('/api/projects', projectsRouter);
