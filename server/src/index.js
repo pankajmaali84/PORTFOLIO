@@ -3,46 +3,27 @@ const express = require('express');
 const cors = require('cors');
 const { connectDB } = require('./config/db');
 
-const projectsRouter = require('./routes/projects');
-const contactRouter = require('./routes/contact');
-
 const app = express();
 app.use(express.json());
 
-// Robust CORS configuration with preflight support
-const corsOptions = {
-  // Allow requests from known frontends; fallback to allowing any origin for this portfolio
-  origin: function (origin, callback) {
-    const allowed = [
-      'https://portfolio-cyan-one-63.vercel.app',
-      'http://localhost:5173',
-      'http://localhost:3000'
-    ];
-    if (!origin || allowed.includes(origin)) return callback(null, true);
-    // For public portfolio, allow other origins too (you can tighten later)
-    return callback(null, true);
-  },
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  optionsSuccessStatus: 200,
-};
-app.use(cors(corsOptions));
-// Handle preflight requests globally
-app.options('*', cors(corsOptions));
+// Diagnostics
+try {
+  const nodeVer = process.versions?.node;
+  const expressVer = require('express/package.json').version;
+  const p2rVer = (() => { try { return require('path-to-regexp/package.json').version; } catch { return '(not found)'; } })();
+  console.log('[Diag] Node', nodeVer, 'Express', expressVer, 'path-to-regexp', p2rVer);
+} catch {}
 
-// Root route to avoid "Not Found" on service base URL
+// CORS (permissive for now)
+app.use(cors({ origin: '*', methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'] }));
+
+// Minimal routes only (routers temporarily disabled to isolate error)
 app.get('/', (_req, res) => {
-  res.type('text').send(
-    'Portfolio API is running. Health: /api/health\nFrontend: https://portfolio-cyan-one-63.vercel.app'
-  );
+  res.type('text').send('Portfolio API is running. Health: /api/health');
 });
-
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
-app.use('/api/projects', projectsRouter);
-app.use('/api/contact', contactRouter);
 
 const PORT = process.env.PORT || 5000;
-
 async function start() {
   try {
     await connectDB(process.env.MONGODB_URI);
@@ -52,5 +33,5 @@ async function start() {
     process.exit(1);
   }
 }
-
 start();
+
