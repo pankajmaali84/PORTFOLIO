@@ -14,8 +14,15 @@ try {
   console.log('[Diag] Node', nodeVer, 'Express', expressVer, 'path-to-regexp', p2rVer);
 } catch {}
 
-// CORS (permissive for now)
-app.use(cors({ origin: '*', methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'] }));
+// CORS (permissive; ensure preflight handled explicitly)
+app.use(cors({
+  origin: '*',
+  methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  maxAge: 86400,
+}));
+// Explicitly respond to preflight for all routes
+app.options('*', cors());
 
 // Routes
 app.get('/', (_req, res) => {

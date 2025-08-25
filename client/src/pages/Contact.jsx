@@ -5,9 +5,12 @@ import { MailIcon } from '../components/Icons'
 import toast from 'react-hot-toast'
 
 export default function Contact() {
-  const api = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE || 'https://portfolio-pankaj-gfzo.onrender.com'
-  })
+  const apiBase =
+    import.meta.env.VITE_API_BASE_URL ||
+    import.meta.env.VITE_API_BASE ||
+    'https://portfolio-server-v4v7.onrender.com'
+
+  const api = axios.create({ baseURL: apiBase })
   const [form, setForm] = useState({ name: '', email: '', subject: '', body: '' })
   const [status, setStatus] = useState({ loading: false, message: '' })
   const [copied, setCopied] = useState(false)
@@ -26,7 +29,7 @@ export default function Contact() {
       setForm({ name: '', email: '', subject: '', body: '' })
       setStatus({ loading: false, message: '' })
     } catch (err) {
-      const apiMsg = err?.response?.data?.message || err?.message || 'Failed to send.'
+      const apiMsg = err?.response?.data?.error || err?.message || 'Failed to send.'
       toast.error(apiMsg)
       setStatus({ loading: false, message: '' })
     } finally {
