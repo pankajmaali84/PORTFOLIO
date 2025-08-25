@@ -17,21 +17,25 @@ try {
 // CORS (permissive for now)
 app.use(cors({ origin: '*', methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'] }));
 
-// Minimal routes only (routers temporarily disabled to isolate error)
+// Routes
 app.get('/', (_req, res) => {
   res.type('text').send('Portfolio API is running. Health: /api/health');
 });
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
+// Mount API routers
+app.use('/api/projects', require('./routes/projects'));
+app.use('/api/contact', require('./routes/contact'));
 
 const PORT = process.env.PORT || 5000;
-async function start() {
-  try {
-    await connectDB(process.env.MONGODB_URI);
-    app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
-  } catch (err) {
-    console.error('Failed to start server', err);
-    process.exit(1);
-  }
-}
-start();
+
+// Start HTTP server immediately so Render detects the open port
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+
+// Connect to MongoDB in the background; do NOT exit on failure
+connectDB(process.env.MONGODB_URI)
+  .then(() => console.log('[Mongo] Connected'))
+  .catch((err) => {
+    console.error('[Mongo] Connection failed (non-fatal for boot):', err?.message || err);
+    console.error('[Mongo] Tip: In Atlas, add Render egress IPs or temporarily allow 0.0.0.0/0 in Network Access.');
+  });
 
