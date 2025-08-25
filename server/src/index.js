@@ -6,6 +6,37 @@ const { connectDB } = require('./config/db');
 const app = express();
 app.use(express.json());
 
+// Manual CORS headers (belt-and-suspenders before cors())
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*';
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '')
+  .split(',')
+  .map(s => s.trim())
+  .filter(Boolean);
+app.use((req, res, next) => {
+  // Decide which origin to allow
+  let originToAllow = '*';
+  const reqOrigin = req.headers.origin;
+  if (ALLOWED_ORIGINS.length > 0) {
+    if (reqOrigin && ALLOWED_ORIGINS.includes(reqOrigin)) originToAllow = reqOrigin;
+    else originToAllow = ALLOWED_ORIGINS[0];
+  } else if (ALLOWED_ORIGIN && ALLOWED_ORIGIN !== '*') {
+    originToAllow = ALLOWED_ORIGIN;
+  }
+
+  res.header('Access-Control-Allow-Origin', originToAllow);
+  res.header('Vary', 'Origin');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+  const reqAclReqHeaders = req.headers['access-control-request-headers'];
+  if (reqAclReqHeaders) {
+    res.header('Access-Control-Allow-Headers', reqAclReqHeaders);
+  } else {
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  }
+  res.header('Access-Control-Max-Age', '86400');
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
+  next();
+});
+
 // Diagnostics
 try {
   const nodeVer = process.versions?.node;
