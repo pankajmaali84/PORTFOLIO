@@ -12,7 +12,7 @@ export default function Contact() {
 
   const api = axios.create({ baseURL: apiBase })
   const [form, setForm] = useState({ name: '', email: '', subject: '', body: '' })
-  const [status, setStatus] = useState({ loading: false, message: '' })
+  const [status, setStatus] = useState({ loading: false, message: '', id: '' })
   const [copied, setCopied] = useState(false)
   const root = useRef(null)
   const ownerEmail = import.meta.env.VITE_OWNER_EMAIL || 'youremail@example.com'
@@ -21,17 +21,18 @@ export default function Contact() {
 
   const onSubmit = async (e) => {
     e.preventDefault()
-    setStatus({ loading: true, message: '' })
+    setStatus({ loading: true, message: '', id: '' })
     const t = toast.loading('Sending message...')
     try {
-      await api.post('/api/contact', form)
+      const res = await api.post('/api/contact', form)
+      const trackId = res?.data?.id || ''
       toast.success('Message sent! ✅')
       setForm({ name: '', email: '', subject: '', body: '' })
-      setStatus({ loading: false, message: '' })
+      setStatus({ loading: false, message: 'Your message was submitted successfully.' + (trackId ? ` Tracking ID: ${trackId}` : ''), id: trackId })
     } catch (err) {
       const apiMsg = err?.response?.data?.error || err?.message || 'Failed to send.'
       toast.error(apiMsg)
-      setStatus({ loading: false, message: '' })
+      setStatus({ loading: false, message: '' , id: ''})
     } finally {
       toast.dismiss(t)
     }
@@ -74,6 +75,12 @@ export default function Contact() {
             {copied ? 'Copied!' : 'Copy Email'}
           </button>
         </div>
+        {status.message && (
+          <div className="mt-6 rounded-lg border border-emerald-300/40 bg-emerald-50 text-emerald-900 px-4 py-3 dark:bg-emerald-900/30 dark:text-emerald-100 dark:border-emerald-700/50">
+            <p className="font-medium">{status.message}</p>
+            <p className="text-xs opacity-80 mt-1">A confirmation email will arrive shortly. If you don’t see it, please check Spam/Promotions.</p>
+          </div>
+        )}
         <form onSubmit={onSubmit} className="mt-6 grid gap-4">
           <input className="contact-field px-4 py-3 rounded-lg bg-white border border-slate-300 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100" placeholder="Name" name="name" value={form.name} onChange={onChange} required />
           <input className="contact-field px-4 py-3 rounded-lg bg-white border border-slate-300 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100" placeholder="Email" type="email" name="email" value={form.email} onChange={onChange} required />
