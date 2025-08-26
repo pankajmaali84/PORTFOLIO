@@ -26,9 +26,10 @@ export default function Contact() {
     try {
       const res = await api.post('/api/contact', form)
       const trackId = res?.data?.id || ''
+      const shortId = trackId ? trackId.slice(-6) : ''
       toast.success('Message sent! ✅')
       setForm({ name: '', email: '', subject: '', body: '' })
-      setStatus({ loading: false, message: 'Your message was submitted successfully.' + (trackId ? ` Tracking ID: ${trackId}` : ''), id: trackId })
+      setStatus({ loading: false, message: 'Your message was submitted successfully.' + (shortId ? ` Tracking ID: ${shortId}` : ''), id: trackId })
     } catch (err) {
       const apiMsg = err?.response?.data?.error || err?.message || 'Failed to send.'
       toast.error(apiMsg)
